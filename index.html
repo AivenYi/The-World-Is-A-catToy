@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>世界是猫猫的玩具</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- 添加得意黑字体 -->
+    <link href="https://cdn.jsdelivr.net/gh/atelier-anchor/smiley-sans@1.1.1/css/smiley-sans.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-logo">
+            <img src="images/cat-logo.png" alt="猫咪logo" class="logo">
+            <span>世界是猫猫的玩具</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="login.html" class="signin">注册/登录</a></li>
+            <li><a href="index.html">首页</a></li>
+            <li><a href="cat-animation.html">猫片</a></li>
+            <li><a href="cat-eye.html">猫眼</a></li>
+            <li><a href="healthy.html">猫基百科</a></li>
+            <li><a href="about.html">猫猫村</a></li>
+        </ul>
+    </nav>
+
+    <div class="banner-container">
+        <div class="banner-wrapper">
+            <div class="banner-slide">
+                <div class="banner-image">
+                    <img src="images/banner1.jpg" alt="猫咪的奇妙世界">
+                    <div class="banner-content">
+                        <div class="content-wrapper">
+                            <h2>探索猫咪的奇妙世界</h2>
+                            <p>让我们一起体验猫咪眼中的缤纷色彩</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="banner-slide">
+                <div class="banner-image">
+                    <img src="images/banner2.jpg" alt="定制专属动画">
+                    <div class="banner-content">
+                        <div class="content-wrapper">
+                            <h2>定制专属动画</h2>
+                            <p>为你的猫咪创造独特的动画故事</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="banner-slide">
+                <div class="banner-image">
+                    <img src="images/banner3.jpg" alt="智能养护助手">
+                    <div class="banner-content">
+                        <div class="content-wrapper">
+                            <h2>智能养护助手</h2>
+                            <p>随时解答你的养猫问题</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="banner-dots">
+            <span class="dot active"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </div>
+        <button class="banner-btn prev">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <button class="banner-btn next">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+    <section class="welcome-module">
+        <div class="welcome-content">
+            <h2>欢迎来到猫猫的奇妙世界</h2>
+            <p>在这里，我们将带你探索猫咪眼中缤纷多彩的世界。无论是定制独特的动画故事，还是通过猫咪视角记录生活的精彩瞬间，亦或是获取智能养护建议，我们都将为你提供最温暖贴心的服务。</p>
+            <div class="welcome-features">
+                <div class="feature-item">
+                    <i class="fas fa-magic"></i>
+                    <h3>创意无限</h3>
+                    <p>定制专属的猫咪动画，让每个故事都独一无二</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-camera"></i>
+                    <h3>记录精彩</h3>
+                    <p>用猫咪的视角，捕捉生活中的每个温馨时刻</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-robot"></i>
+                    <h3>智能养护</h3>
+                    <p>专业的养猫建议，让猫咪生活更健康快乐</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <main class="main-content">
+        <div class="features-grid">
+            <!-- 动画模块 -->
+            <div class="feature-card animation-card">
+                <div class="feature-icon">
+                    <i class="fas fa-magic"></i>
+                </div>
+                <h2>创意无限</h2>
+                <p>定制专属的猫咪动画，让每个故事都独一无二</p>
+                <div class="feature-options">
+                    <div class="option-item">
+                        <i class="fas fa-fish"></i>
+                        <span>蝌蚪</span>
+                    </div>
+                    <div class="option-item">
+                        <i class="fas fa-circle"></i>
+                        <span>毛球</span>
+                    </div>
+                    <div class="option-item">
+                        <i class="fas fa-mouse"></i>
+                        <span>老鼠</span>
+                    </div>
+                    <div class="option-item">
+                        <i class="fas fa-bug"></i>
+                        <span>蟑螂</span>
+                    </div>
+                    <div class="option-item">
+                        <i class="fas fa-dove"></i>
+                        <span>小鸟</span>
+                    </div>
+                    <div class="option-item">
+                        <i class="fas fa-frog"></i>
+                        <span>青蛙</span>
+                    </div>
+                </div>
+                <button class="feature-btn">开始定制</button>
+            </div>
+
+            <!-- 相机模块 -->
+            <div class="feature-card camera-card">
+                <div class="feature-icon">
+                    <i class="fas fa-camera"></i>
+                </div>
+                <h2>记录精彩</h2>
+                <p>用猫咪的视角，捕捉生活中的每个温馨时刻</p>
+                <div class="preview-images">
+                    <div class="preview-item">
+                        <span>普通视角</span>
+                        <div class="preview-img">
+                            <img src="images/before.png" alt="普通视角">
+                        </div>
+                    </div>
+                    <i class="fas fa-arrow-right"></i>
+                    <div class="preview-item">
+                        <span>猫咪视角</span>
+                        <div class="preview-img">
+                            <img src="images/after.png" alt="猫咪视角">
+                        </div>
+                    </div>
+                </div>
+                <button class="feature-btn">开启相机</button>
+            </div>
+
+            <!-- 机器人模块 -->
+            <div class="feature-card robot-card">
+                <div class="feature-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h2>智能养护</h2>
+                <p>专业的养猫建议，让猫咪生活更健康快乐</p>
+                <div class="chat-preview">
+                    <div class="chat-message">
+                        <i class="fas fa-user"></i>
+                        <div class="message-content">猫咪最近食欲不振怎么办？</div>
+                    </div>
+                    <div class="chat-message bot">
+                        <i class="fas fa-robot"></i>
+                        <div class="message-content">让我来帮你分析可能的原因...</div>
+                    </div>
+                </div>
+                <button class="feature-btn" onclick="window.location.href='healthy.html'">开始对话</button>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2025 猫咪家长集成平台 版权所有</p>
+    </footer>
+    <script src="https://kit.fontawesome.com/your-code.js" crossorigin="anonymous"></script>
+    <script src="js/banner.js"></script>
+</body>
+</html>

@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>猫咪制作工坊</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B6B;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --background: #F7F7F7;
+            --text: #2C3E50;
+            --selected-color: rgba(255, 255, 255, 0.5);  /* 新增CSS变量 */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-image: url('images/kitchen-bg.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            overflow: hidden;
+        }
+
+        /* 主容器样式调整 */
+        .container {
+            position: relative;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* 食材面板容器 */
+        .ingredients-panel {
+            position: absolute;
+            top: -100px;
+            left: 200px;
+            width: 600px;
+            height: 800px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: translateX(100px);
+        }
+
+        /* 背景气泡 */
+        .bubble-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            transform: scale(3.5) translateY(-50px);
+            object-fit: contain;
+            transform-origin: center;
+        }
+
+        /* 食材列表样式 */
+        .ingredients-list {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            padding: 40px 20px;
+            height: 100%;
+        }
+
+        .ingredient-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 120px;
+            background: none;
+        }
+
+        .ingredient-icon {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            background: none;
+        }
+
+        .ingredient-name {
+            font-weight: 500;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        /* 左侧食材面板 */
+        .ingredients-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: none;
+            border-radius: 0;
+            padding: 0;
+            box-shadow: none;
+            max-width: 250px;
+            z-index: 10;
+        }
+
+        .ingredients-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .ingredient-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: none;
+            border-radius: 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .ingredient-item:hover {
+            transform: none;
+            background: none;
+        }
+
+        .ingredient-icon {
+            width: 40px;
+            height: 40px;
+            background: none;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .ingredient-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        /* 中央烹饪区样式更新 */
+        .cooking-area {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .cat-chef-container {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+            background: none;
+            border-radius: 0;
+            padding: 0;
+            box-shadow: none;
+        }
+
+        /* 添加圆形渐变背景 */
+        .cat-chef-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(
+                circle,
+                rgba(255, 255, 255, 0.7) 0%,
+                rgba(255, 255, 255, 0.6) 30%,
+                rgba(255, 255, 255, 0.4) 60%,
+                rgba(255, 255, 255, 0) 100%
+            );
+            border-radius: 50%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .cat-chef-gif {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            cursor: pointer;
+            transition: none;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cat-chef-gif:hover {
+            transform: none;
+        }
+
+        .cat-chef-gif.cooking {
+            animation: none;
+        }
+
+        .steam {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: none;
+            border-radius: 0;
+            filter: none;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        @keyframes steam {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(-100px) scale(2);
+                opacity: 0;
+            }
+        }
+
+        /* 开始制作按钮样式 */
+        .start-cooking-btn {
+            position: absolute;
+            bottom: 0px;
+            z-index: 3;
+            margin-top: 0;
+            padding: 12px 30px;  
+            font-size: 1rem;    
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(45deg, #FF6B6B, #FF8E8E);
+            border: none;
+            border-radius: 40px;  
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .start-cooking-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        }
+
+        .start-cooking-btn:active {
+            transform: translateY(-1px);
+        }
+
+        /* 按钮点击波纹效果 */
+        .start-cooking-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease-out, height 0.6s ease-out;
+        }
+
+        .start-cooking-btn:active::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        /* 加载动画 */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: none;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loading-content {
+            text-align: center;
+            color: #333;
+        }
+
+        .progress-bar {
+            width: 300px;
+            height: 10px;
+            background: none;
+            border-radius: 0;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .progress {
+            width: 0%;
+            height: 100%;
+            background: none;
+            border-radius: 0;
+            transition: none;
+        }
+
+        /* 移除控制面板相关样式 */
+        .control-panel {
+            display: none;  /* 隐藏控制面板 */
+        }
+
+        .options-group {
+            display: none;
+        }
+
+        .group-title {
+            display: none;
+        }
+
+        .color-options {
+            display: none;
+        }
+
+        .color-option {
+            display: none;
+        }
+
+        /* 运动主体按钮容器 */
+        .motion-subjects {
+            position: absolute;
+            top: 35%;  
+            left: 50%;
+            transform: translate(-50%, -50%) translateY(-50px);  
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 20px;
+            z-index: 11;
+            width: 300px;
+        }
+
+        /* 按钮基础样式 */
+        .subject-btn {
+            width: 70px;
+            height: 70px;
+            border-radius: 15px;
+            background-color: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            color: #333;
+            font-size: 0.9rem;
+            padding: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 按钮图标基础样式 */
+        .subject-btn i {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        /* 选中状态样式 */
+        .subject-btn.selected {
+            background-color: var(--selected-color);
+            border-color: white;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 选中状态下的图标样式 */
+        .subject-btn.selected i {
+            transform: scale(1.2); /* 图标放大20% */
+        }
+
+        /* 移除悬停效果的transform */
+        .subject-btn:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* 动画效果 */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .floating {
+            animation: none;
+        }
+
+        /* 颜料笔容器 */
+        .color-pens {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            display: flex;
+            gap: 25px;  
+            z-index: 100;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transform: rotate(-15deg);  
+        }
+
+        .color-pen {
+            width: 50px;  
+            height: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,0.8);
+            box-shadow: 
+                0 5px 15px rgba(0,0,0,0.2),
+                inset 0 -8px 12px rgba(0,0,0,0.1),
+                inset 0 8px 12px rgba(255,255,255,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .color-pen::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.8) 0%, transparent 60%);
+            opacity: 0.4;
+        }
+
+        .color-pen i {
+            font-size: 1.8rem;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transform: translateY(-2px);  
+        }
+
+        .color-pen.selected {
+            transform: scale(1.15);
+            box-shadow: 
+                0 8px 20px rgba(0,0,0,0.25),
+                inset 0 -8px 12px rgba(0,0,0,0.2),
+                inset 0 8px 12px rgba(255,255,255,0.6);
+            border-color: white;
+        }
+
+        .color-pen:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 
+                0 15px 25px rgba(0,0,0,0.2),
+                inset 0 -8px 12px rgba(0,0,0,0.1),
+                inset 0 8px 12px rgba(255,255,255,0.4);
+        }
+
+        /* 定义三种颜色 */
+        .pen-pink { 
+            background: linear-gradient(135deg, #FF69B4, #FFB6C1, #FF69B4);
+            border-color: #FFD1DC;
+        }
+        .pen-purple { 
+            background: linear-gradient(135deg, #9370DB, #BA55D3, #9370DB);
+            border-color: #E6E6FA;
+        }
+        .pen-blue { 
+            background: linear-gradient(135deg, #4169E1, #87CEEB, #4169E1);
+            border-color: #B0E2FF;
+        }
+
+        /* 右下角设置面板 */
+        .settings-panel {
+            position: fixed;
+            right: 40px;
+            bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 100;
+        }
+
+        .settings-group {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 15px 25px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border: 2px solid rgba(255,255,255,0.8);
+            min-width: 280px;
+        }
+
+        .settings-options {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .setting-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 15px;
+            background: rgba(255,255,255,0.7);
+            border: 2px solid rgba(255,255,255,0.8);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .setting-btn i {
+            font-size: 1.2rem;
+        }
+
+        .setting-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .setting-label {
+            font-size: 0.8rem;
+            color: #555;
+            text-align: center;
+        }
+
+        .setting-btn:hover {
+            transform: translateY(-3px);
+            background: rgba(255,255,255,0.9);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .setting-btn.active {
+            background: var(--selected-color, rgba(255,255,255,0.9));
+            color: #333;
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* 返回按钮样式 */
+        .back-home {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            background: linear-gradient(135deg, #FF69B4, #FF1493);
+            border: none;
+            border-radius: 25px;
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: white;
+            font-size: 1rem;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(255, 105, 180, 0.3);
+            z-index: 100;
+        }
+
+        .back-home i {
+            font-size: 1.2rem;
+        }
+
+        .back-home:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(255, 105, 180, 0.4);
+            background: linear-gradient(135deg, #FF1493, #FF69B4);
+        }
+    </style>
+</head>
+<body>
+    <!-- 添加返回首页按钮 -->
+    <a href="index.html" class="back-home">
+        <i class="fas fa-arrow-left"></i>
+        返回首页
+    </a>
+
+    <div class="container">
+        <!-- 颜料笔选择器 -->
+        <div class="color-pens">
+            <div class="color-pen pen-pink selected" data-color="#FF69B4">
+                <i class="fas fa-paint-brush"></i>
+            </div>
+            <div class="color-pen pen-purple" data-color="#9370DB">
+                <i class="fas fa-paint-brush"></i>
+            </div>
+            <div class="color-pen pen-blue" data-color="#4169E1">
+                <i class="fas fa-paint-brush"></i>
+            </div>
+        </div>
+
+        <div class="ingredients-panel">
+            <img src="images/bubble1.png" alt="气泡背景" class="bubble-bg">
+            <!-- 添加运动主体选择按钮 -->
+            <div class="motion-subjects">
+                <button class="subject-btn">
+                    <i class="fas fa-fish"></i>
+                    鲫鱼
+                </button>
+                <button class="subject-btn">
+                    <i class="fas fa-circle"></i>
+                    毛球
+                </button>
+                <button class="subject-btn">
+                    <i class="fas fa-mouse"></i>
+                    老鼠
+                </button>
+                <button class="subject-btn">
+                    <i class="fas fa-bug"></i>
+                    蟑螂
+                </button>
+                <button class="subject-btn">
+                    <i class="fas fa-dove"></i>
+                    小鸟
+                </button>
+                <button class="subject-btn">
+                    <i class="fas fa-frog"></i>
+                    青蛙
+                </button>
+            </div>
+        </div>
+
+        <!-- 中央烹饪区更新 -->
+        <div class="cooking-area">
+            <div class="cat-chef-container">
+                <img src="images/cat-chef.gif" alt="猫咪大厨" class="cat-chef-gif" id="catChef">
+                <button class="start-cooking-btn" id="startCookingBtn">
+                    <i class="fas fa-magic"></i>开始制作
+                </button>
+            </div>
+        </div>
+
+        <!-- 加载动画 -->
+        <div class="loading" id="loading">
+            <div class="loading-content">
+                <h2>正在制作中...</h2>
+                <div class="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 添加右下角设置面板 -->
+        <div class="settings-panel">
+            <!-- 声音设置 -->
+            <div class="settings-group">
+                <div class="settings-title">声音设置</div>
+                <div class="settings-options">
+                    <div class="setting-item">
+                        <button class="setting-btn active" data-sound="meow">
+                            <i class="fas fa-volume-up"></i>
+                        </button>
+                        <div class="setting-label">喵喵声</div>
+                    </div>
+                    <div class="setting-item">
+                        <button class="setting-btn" data-sound="purr">
+                            <i class="fas fa-music"></i>
+                        </button>
+                        <div class="setting-label">呼噜声</div>
+                    </div>
+                    <div class="setting-item">
+                        <button class="setting-btn" data-sound="none">
+                            <i class="fas fa-volume-mute"></i>
+                        </button>
+                        <div class="setting-label">静音</div>
+                    </div>
+                    <div class="setting-item">
+                        <button class="setting-btn" data-sound="custom">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                        <div class="setting-label">自定义</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 背景设置 -->
+            <div class="settings-group">
+                <div class="settings-title">背景选择</div>
+                <div class="settings-options">
+                    <div class="setting-item">
+                        <button class="setting-btn active" data-bg="kitchen">
+                            <i class="fas fa-home"></i>
+                        </button>
+                        <div class="setting-label">温馨厨房</div>
+                    </div>
+                    <div class="setting-item">
+                        <button class="setting-btn" data-bg="garden">
+                            <i class="fas fa-tree"></i>
+                        </button>
+                        <div class="setting-label">花园</div>
+                    </div>
+                    <div class="setting-item">
+                        <button class="setting-btn" data-bg="room">
+                            <i class="fas fa-bed"></i>
+                        </button>
+                        <div class="setting-label">卧室</div>
+                    </div>
+                    <div class="setting-item">
+                        <button class="setting-btn" data-bg="custom">
+                            <i class="fas fa-image"></i>
+                        </button>
+                        <div class="setting-label">自定义</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // 颜料笔选择功能
+                const colorPens = document.querySelectorAll('.color-pen');
+                const subjectBtns = document.querySelectorAll('.subject-btn');
+                
+                console.log('找到的颜料笔:', colorPens.length); // 调试信息
+                console.log('找到的按钮:', subjectBtns.length); // 调试信息
+                
+                // 设置CSS变量初始值为半透明白色
+                document.documentElement.style.setProperty('--selected-color', 'rgba(255, 255, 255, 0.5)');
+
+                // 设置默认颜色为半透明白色
+                subjectBtns.forEach(btn => {
+                    btn.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
+                });
+
+                // 颜料笔点击事件
+                colorPens.forEach(pen => {
+                    pen.addEventListener('click', (e) => {
+                        console.log('颜料笔被点击'); // 调试信息
+                        
+                        // 移除其他笔的选中状态
+                        colorPens.forEach(p => p.classList.remove('selected'));
+                        // 添加当前笔的选中状态
+                        pen.classList.add('selected');
+                        
+                        // 获取颜色并转换为半透明
+                        const color = pen.getAttribute('data-color');
+                        const rgbaColor = hexToRGBA(color, 0.5);  // 转换为半透明色
+                        
+                        // 更新CSS变量
+                        document.documentElement.style.setProperty('--selected-color', rgbaColor);
+                        
+                        // 应用到所有按钮
+                        subjectBtns.forEach(btn => {
+                            btn.style.backgroundColor = rgbaColor;
+                            console.log('更新按钮颜色:', rgbaColor); // 调试信息
+                        });
+                    });
+                });
+
+                // 辅助函数：将HEX颜色转换为RGBA
+                function hexToRGBA(hex, alpha = 1) {
+                    let r = parseInt(hex.slice(1, 3), 16),
+                        g = parseInt(hex.slice(3, 5), 16),
+                        b = parseInt(hex.slice(5, 7), 16);
+                    
+                    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                }
+
+                // 拖拽功能
+                const ingredients = document.querySelectorAll('.ingredient-item');
+                const pot = document.getElementById('cookingPot');
+                const startButton = document.getElementById('startButton');
+                const loading = document.getElementById('loading');
+                const progress = document.getElementById('progress');
+
+                ingredients.forEach(ingredient => {
+                    ingredient.addEventListener('dragstart', (e) => {
+                        e.dataTransfer.setData('text/plain', e.target.dataset.type);
+                        ingredient.classList.add('dragging');
+                    });
+
+                    ingredient.addEventListener('dragend', () => {
+                        ingredient.classList.remove('dragging');
+                    });
+                });
+
+                pot.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    pot.classList.add('pot-highlight');
+                });
+
+                pot.addEventListener('dragleave', () => {
+                    pot.classList.remove('pot-highlight');
+                });
+
+                pot.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    pot.classList.remove('pot-highlight');
+                    
+                    const type = e.dataTransfer.getData('text/plain');
+                    const ingredient = document.querySelector(`[data-type="${type}"]`);
+                    
+                    if (ingredient) {
+                        const clone = ingredient.querySelector('.ingredient-icon').cloneNode(true);
+                        clone.style.position = 'absolute';
+                        clone.style.left = `${Math.random() * 60 + 20}%`;
+                        clone.style.top = `${Math.random() * 60 + 20}%`;
+                        clone.style.transform = 'scale(0.8)';
+                        clone.style.transition = 'all 0.3s ease';
+                        
+                        pot.querySelector('.pot-content').appendChild(clone);
+                    }
+                });
+
+                // 开始按钮功能
+                startButton.addEventListener('click', () => {
+                    loading.style.display = 'flex';
+                    let width = 0;
+                    
+                    const interval = setInterval(() => {
+                        width += 1;
+                        progress.style.width = `${width}%`;
+                        
+                        if (width >= 100) {
+                            clearInterval(interval);
+                            setTimeout(() => {
+                                loading.style.display = 'none';
+                                progress.style.width = '0%';
+                                alert('制作完成！');
+                            }, 500);
+                        }
+                    }, 50);
+                });
+
+                // 颜色选择功能
+                const colorOptions = document.querySelectorAll('.color-option');
+                colorOptions.forEach(option => {
+                    option.addEventListener('click', () => {
+                        colorOptions.forEach(opt => opt.classList.remove('active'));
+                        option.classList.add('active');
+                        document.documentElement.style.setProperty('--primary', option.dataset.color);
+                    });
+                });
+
+                // 猫咪大厨交互效果
+                const catChef = document.getElementById('catChef');
+                let isDragging = false;
+                let startY = 0;
+                let currentRotation = 0;
+                let cookingInterval = null;
+                let steamInterval = null;
+
+                // 创建蒸汽效果
+                function createSteam() {
+                    const steam = document.createElement('div');
+                    steam.className = 'steam';
+                    const randomX = Math.random() * 100 - 50;
+                    steam.style.left = `calc(50% + ${randomX}px)`;
+                    steam.style.top = '40%';
+                    steam.style.animation = 'steam 2s ease-out forwards';
+                    document.querySelector('.cat-chef-container').appendChild(steam);
+                    
+                    // 移除蒸汽元素
+                    setTimeout(() => {
+                        steam.remove();
+                    }, 2000);
+                }
+
+                // 开始烹饪动画
+                function startCooking() {
+                    catChef.classList.add('cooking');
+                    
+                    // 添加蒸汽效果
+                    if (!steamInterval) {
+                        steamInterval = setInterval(createSteam, 500);
+                    }
+                }
+
+                // 停止烹饪动画
+                function stopCooking() {
+                    catChef.classList.remove('cooking');
+                    if (steamInterval) {
+                        clearInterval(steamInterval);
+                        steamInterval = null;
+                    }
+                }
+
+                // 鼠标事件
+                catChef.addEventListener('mousedown', (e) => {
+                    isDragging = true;
+                    startY = e.clientY;
+                    startCooking();
+                });
+
+                document.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    
+                    const deltaY = e.clientY - startY;
+                    currentRotation = deltaY * 0.1;
+                    currentRotation = Math.max(-15, Math.min(15, currentRotation));
+                    
+                    catChef.style.transform = `rotate(${currentRotation}deg)`;
+                });
+
+                document.addEventListener('mouseup', () => {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    startY = 0;
+                    currentRotation = 0;
+                    catChef.style.transform = '';
+                    stopCooking();
+                });
+
+                // 点击效果
+                catChef.addEventListener('click', () => {
+                    if (!isDragging) {
+                        startCooking();
+                        setTimeout(stopCooking, 1000);
+                    }
+                });
+
+                // 触摸事件支持
+                catChef.addEventListener('touchstart', (e) => {
+                    isDragging = true;
+                    startY = e.touches[0].clientY;
+                    startCooking();
+                });
+
+                document.addEventListener('touchmove', (e) => {
+                    if (!isDragging) return;
+                    
+                    const deltaY = e.touches[0].clientY - startY;
+                    currentRotation = deltaY * 0.1;
+                    currentRotation = Math.max(-15, Math.min(15, currentRotation));
+                    
+                    catChef.style.transform = `rotate(${currentRotation}deg)`;
+                });
+
+                document.addEventListener('touchend', () => {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    startY = 0;
+                    currentRotation = 0;
+                    catChef.style.transform = '';
+                    stopCooking();
+                });
+
+                // 开始制作按钮功能
+                const startCookingBtn = document.getElementById('startCookingBtn');
+                
+                startCookingBtn.addEventListener('click', () => {
+                    // 开始烹饪动画
+                    startCooking();
+                    
+                    // 禁用按钮，显示加载状态
+                    startCookingBtn.disabled = true;
+                    startCookingBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>制作中...';
+                    
+                    // 3秒后恢复按钮状态并停止动画
+                    setTimeout(() => {
+                        stopCooking();
+                        startCookingBtn.disabled = false;
+                        startCookingBtn.innerHTML = '<i class="fas fa-magic"></i>开始制作';
+                    }, 3000);
+                });
+
+                // 运动主体按钮点击事件
+                subjectBtns.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        // 如果按钮已经是选中状态，则取消选中
+                        if (btn.classList.contains('selected')) {
+                            btn.classList.remove('selected');
+                        } else {
+                            // 移除其他按钮的选中状态
+                            subjectBtns.forEach(otherBtn => {
+                                otherBtn.classList.remove('selected');
+                            });
+                            // 添加当前按钮的选中状态
+                            btn.classList.add('selected');
+                        }
+                    });
+                });
+
+                // 设置按钮点击事件
+                const settingBtns = document.querySelectorAll('.setting-btn');
+                
+                settingBtns.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        // 获取当前按钮所在的设置组
+                        const group = btn.closest('.settings-group');
+                        // 移除该组中其他按钮的active类
+                        group.querySelectorAll('.setting-btn').forEach(b => {
+                            b.classList.remove('active');
+                        });
+                        // 添加当前按钮的active类
+                        btn.classList.add('active');
+                        
+                        // 根据按钮类型执行相应操作
+                        if(btn.dataset.sound) {
+                            console.log('切换声音:', btn.dataset.sound);
+                            // 这里添加声音切换逻辑
+                        } else if(btn.dataset.bg) {
+                            console.log('切换背景:', btn.dataset.bg);
+                            // 这里添加背景切换逻辑
+                        }
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

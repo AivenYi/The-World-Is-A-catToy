@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>猫眼智能相机</title>
+    <link href="https://cdn.jsdelivr.net/gh/atelier-anchor/smiley-sans@1.1.1/css/smiley-sans.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 80px auto 0;
+            padding: 20px;
+        }
+
+        .camera-modes {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .mode-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mode-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-middle), var(--gradient-end));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+
+        .mode-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .mode-card.active {
+            transform: translateY(-5px);
+        }
+
+        .mode-card.active::before {
+            opacity: 0.2;
+        }
+
+        .mode-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            position: relative;
+            z-index: 2;
+        }
+
+        .mode-title {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: var(--text-color);
+            position: relative;
+            z-index: 2;
+        }
+
+        .mode-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+            position: relative;
+            z-index: 2;
+        }
+
+        .camera-preview {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-middle), var(--gradient-end));
+            border-radius: 15px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            overflow: hidden;
+            position: relative;
+            perspective: 1000px;
+        }
+
+        /* 投影仪控制面板样式 */
+        .projector-controls {
+            display: none;
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .remote-icon {
+            display: none;
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            transition: transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .remote-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .confirm-btn {
+            display: block;
+            width: 100%;
+            padding: 8px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            font-size: 14px;
+        }
+
+        .confirm-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .control-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            width: 180px;
+        }
+
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: transform 0.2s ease;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .control-btn:active {
+            transform: scale(0.95);
+        }
+
+        .control-btn.up {
+            grid-column: 2;
+            grid-row: 1;
+        }
+
+        .control-btn.left {
+            grid-column: 1;
+            grid-row: 2;
+        }
+
+        .control-btn.right {
+            grid-column: 3;
+            grid-row: 2;
+        }
+
+        .control-btn.down {
+            grid-column: 2;
+            grid-row: 3;
+        }
+
+        .angle-info {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 12px;
+            color: var(--text-color);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: var(--text-color);
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        #camera-feed {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+
+        /* 导航栏样式会从 styles.css 继承 */
+    </style>
+</head>
+<body>
+    <!-- 添加导航栏 -->
+    <nav class="navbar">
+        <div class="nav-logo">
+            <img src="images/cat-logo.png" alt="猫咪logo" class="logo">
+            <span>世界是猫猫的玩具</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="login.html" class="signin">注册/登录</a></li>
+            <li><a href="/">首页</a></li>
+            <li><a href="/custom-animation">猫片</a></li>
+            <li><a href="cat-eye.html" class="active">猫眼</a></li>
+            <li><a href="healthy.html">猫基百科</a></li>
+            <li><a href="about.html">猫猫村</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>猫眼智能相机</h1>
+            <p>智能分析您的猫咪健康状况</p>
+        </div>
+
+        <div class="camera-preview">
+            <video id="camera-feed" autoplay playsinline>
+                相机预览区域
+            </video>
+            <div class="projector-controls" id="projectorControls">
+                <div class="control-buttons">
+                    <button class="control-btn up" title="向上旋转">↑</button>
+                    <button class="control-btn left" title="向左旋转">←</button>
+                    <button class="control-btn right" title="向右旋转">→</button>
+                    <button class="control-btn down" title="向下旋转">↓</button>
+                </div>
+                <div class="angle-info">
+                    X轴: <span id="xAngle">0</span>° | Y轴: <span id="yAngle">0</span>°
+                </div>
+                <button class="confirm-btn" id="confirmBtn">确定</button>
+            </div>
+            <div class="remote-icon" id="remoteIcon" title="打开控制面板">🎮</div>
+        </div>
+
+        <div class="camera-modes">
+            <div class="mode-card" data-mode="eye-color">
+                <div class="mode-icon">👁️</div>
+                <h3 class="mode-title">猫眼颜色检测</h3>
+                <p class="mode-description">分析猫咪眼睛的颜色变化，了解猫咪的情绪和健康状态</p>
+            </div>
+
+            <div class="mode-card" data-mode="health">
+                <div class="mode-icon">🔍</div>
+                <h3 class="mode-title">健康检测</h3>
+                <p class="mode-description">智能分析猫咪粑粑的状态，及时发现健康问题</p>
+            </div>
+
+            <div class="mode-card" data-mode="projector">
+                <div class="mode-icon">📽️</div>
+                <h3 class="mode-title">投影仪模式</h3>
+                <p class="mode-description">切换到投影仪硬件画面，享受大屏互动体验</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 获取所有模式卡片
+        const modeCards = document.querySelectorAll('.mode-card');
+        let activeMode = null;
+        
+        // 投影仪控制相关变量
+        const projectorControls = document.getElementById('projectorControls');
+        const remoteIcon = document.getElementById('remoteIcon');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const videoElement = document.getElementById('camera-feed');
+        let xAngle = 0;
+        let yAngle = 0;
+        const ROTATION_STEP = 10; // 每次旋转的角度
+
+        // 确定按钮点击事件
+        confirmBtn.addEventListener('click', () => {
+            projectorControls.style.display = 'none';
+            remoteIcon.style.display = 'flex';
+        });
+
+        // 遥控器图标点击事件
+        remoteIcon.addEventListener('click', () => {
+            projectorControls.style.display = 'block';
+            remoteIcon.style.display = 'none';
+        });
+
+        // 更新角度显示
+        function updateAngleDisplay() {
+            document.getElementById('xAngle').textContent = xAngle;
+            document.getElementById('yAngle').textContent = yAngle;
+        }
+
+        // 更新视频变换样式
+        function updateVideoTransform() {
+            videoElement.style.transform = `rotateX(${xAngle}deg) rotateY(${yAngle}deg)`;
+        }
+
+        // 添加控制按钮事件监听
+        document.querySelector('.control-btn.up').addEventListener('click', () => {
+            xAngle = (xAngle + ROTATION_STEP) % 360;
+            updateAngleDisplay();
+            updateVideoTransform();
+        });
+
+        document.querySelector('.control-btn.down').addEventListener('click', () => {
+            xAngle = (xAngle - ROTATION_STEP) % 360;
+            updateAngleDisplay();
+            updateVideoTransform();
+        });
+
+        document.querySelector('.control-btn.left').addEventListener('click', () => {
+            yAngle = (yAngle + ROTATION_STEP) % 360;
+            updateAngleDisplay();
+            updateVideoTransform();
+        });
+
+        document.querySelector('.control-btn.right').addEventListener('click', () => {
+            yAngle = (yAngle - ROTATION_STEP) % 360;
+            updateAngleDisplay();
+            updateVideoTransform();
+        });
+
+        // 为每个卡片添加点击事件
+        modeCards.forEach(card => {
+            card.addEventListener('click', function() {
+                // 移除其他卡片的active类
+                modeCards.forEach(c => c.classList.remove('active'));
+                // 添加当前卡片的active类
+                this.classList.add('active');
+                
+                // 获取当前模式
+                const mode = this.dataset.mode;
+                activeMode = mode;
+                
+                // 根据不同模式执行相应的操作
+                switch(mode) {
+                    case 'eye-color':
+                        console.log('切换到猫眼颜色检测模式');
+                        projectorControls.style.display = 'none';
+                        remoteIcon.style.display = 'none';
+                        break;
+                    case 'health':
+                        console.log('切换到健康检测模式');
+                        projectorControls.style.display = 'none';
+                        remoteIcon.style.display = 'none';
+                        break;
+                    case 'projector':
+                        console.log('切换到投影仪模式');
+                        projectorControls.style.display = 'block';
+                        remoteIcon.style.display = 'none';
+                        break;
+                }
+            });
+        });
+
+        // 请求相机权限并显示预览
+        async function initCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                videoElement.srcObject = stream;
+            } catch (err) {
+                console.error('无法访问相机：', err);
+            }
+        }
+
+        // 页面加载完成后初始化相机
+        window.addEventListener('load', initCamera);
+    </script>
+</body>
+</html>

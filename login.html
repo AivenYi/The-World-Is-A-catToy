@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录/注册 - 世界是猫猫的玩具</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(-45deg, #ffb6c1, #ff69b4, #87ceeb, #6495ed);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            width: 320px;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            border-bottom: 2px solid #ff69b4;
+            color: #ff69b4;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .verify-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .verify-group input {
+            flex: 1;
+        }
+
+        .verify-btn {
+            padding: 8px 15px;
+            background: #ff69b4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .verify-btn:hover {
+            background: #ff5ca8;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 10px;
+            background: #ff69b4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .submit-btn:hover {
+            background: #ff5ca8;
+        }
+
+        .back-home {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+        }
+
+        .home-btn {
+            background: #ff69b4;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .home-btn:hover {
+            background: #ff5ca8;
+            transform: translateY(-2px);
+        }
+
+        .error-message {
+            color: #ff4444;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="back-home">
+        <button onclick="window.location.href='index.html'" class="home-btn">
+            <i class="fas fa-home"></i> 返回首页
+        </button>
+    </div>
+
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('login')">登录</div>
+            <div class="tab" onclick="switchTab('register')">注册</div>
+        </div>
+
+        <form id="loginForm" onsubmit="return handleSubmit(event, 'login')">
+            <div class="form-group">
+                <label>手机号码</label>
+                <input type="text" id="loginPhone" required>
+                <div class="error-message" id="loginPhoneError">请输入正确的11位手机号码</div>
+            </div>
+            <div class="form-group">
+                <label>验证码</label>
+                <div class="verify-group">
+                    <input type="text" id="loginVerifyCode" required>
+                    <button type="button" class="verify-btn" onclick="sendVerifyCode('login')">发送验证码</button>
+                </div>
+                <div class="error-message" id="loginCodeError">验证码错误</div>
+            </div>
+            <button type="submit" class="submit-btn">登录</button>
+        </form>
+
+        <form id="registerForm" style="display: none;" onsubmit="return handleSubmit(event, 'register')">
+            <div class="form-group">
+                <label>手机号码</label>
+                <input type="text" id="registerPhone" required>
+                <div class="error-message" id="registerPhoneError">请输入正确的11位手机号码</div>
+            </div>
+            <div class="form-group">
+                <label>验证码</label>
+                <div class="verify-group">
+                    <input type="text" id="registerVerifyCode" required>
+                    <button type="button" class="verify-btn" onclick="sendVerifyCode('register')">发送验证码</button>
+                </div>
+                <div class="error-message" id="registerCodeError">验证码错误</div>
+            </div>
+            <button type="submit" class="submit-btn">注册</button>
+        </form>
+    </div>
+
+    <script>
+        // 存储验证码
+        const verifyCodeMap = new Map();
+
+        // 切换标签页
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.tab:${tab === 'login' ? 'first-child' : 'last-child'}`).classList.add('active');
+            document.getElementById('loginForm').style.display = tab === 'login' ? 'block' : 'none';
+            document.getElementById('registerForm').style.display = tab === 'register' ? 'block' : 'none';
+        }
+
+        // 验证手机号码
+        function validatePhone(phone) {
+            return /^1\d{10}$/.test(phone);
+        }
+
+        // 生成验证码
+        function generateVerifyCode() {
+            return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+
+        // 发送验证码
+        function sendVerifyCode(type) {
+            const phone = document.getElementById(`${type}Phone`).value;
+            const errorElement = document.getElementById(`${type}PhoneError`);
+            
+            if (!validatePhone(phone)) {
+                errorElement.style.display = 'block';
+                return;
+            }
+            
+            errorElement.style.display = 'none';
+            const code = generateVerifyCode();
+            verifyCodeMap.set(phone, code);
+            alert(`验证码已发送：${code}`);
+        }
+
+        // 处理表单提交
+        function handleSubmit(event, type) {
+            event.preventDefault();
+            
+            const phone = document.getElementById(`${type}Phone`).value;
+            const code = document.getElementById(`${type}VerifyCode`).value;
+            const phoneError = document.getElementById(`${type}PhoneError`);
+            const codeError = document.getElementById(`${type}CodeError`);
+            
+            // 重置错误提示
+            phoneError.style.display = 'none';
+            codeError.style.display = 'none';
+
+            // 验证手机号
+            if (!validatePhone(phone)) {
+                phoneError.style.display = 'block';
+                return false;
+            }
+
+            // 验证验证码
+            if (verifyCodeMap.get(phone) !== code) {
+                codeError.style.display = 'block';
+                return false;
+            }
+
+            // 验证通过
+            alert(`${type === 'login' ? '登录' : '注册'}成功！`);
+            window.location.href = 'index.html';
+            return false;
+        }
+    </script>
+</body>
+</html> 
